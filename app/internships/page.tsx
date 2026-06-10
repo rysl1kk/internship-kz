@@ -1,8 +1,40 @@
 "use client";
 
 import { useState } from "react";
+// Исправили путь: теперь он точно найдет файл в корне проекта
+import { supabase } from "../../supabaseClient"; 
 
 export default function InternshipsPage() {
+  // Переменная, которая будет помнить, на какие компании мы откликнулись
+  const [appliedVacancies, setAppliedVacancies] = useState<string[]>([]);
+
+  // Главная функция: отправляет отклик в Supabase или удаляет его
+  const handleApply = async (companyName: string) => {
+    const isApplied = appliedVacancies.includes(companyName);
+
+    if (isApplied) {
+      // Если уже откликались — удаляем строку из базы Supabase
+      const { error } = await supabase
+        .from('applications')
+        .delete()
+        .eq('vacancy_id', companyName);
+
+      if (!error) {
+        // Делаем кнопку снова синей
+        setAppliedVacancies(appliedVacancies.filter(name => name !== companyName));
+      }
+    } else {
+      // Если не откликались — добавляем строку в базу Supabase
+      const { error } = await supabase
+        .from('applications')
+        .insert([{ user_id: 'student_1', vacancy_id: companyName }]);
+
+      if (!error) {
+        // Делаем кнопку красной
+        setAppliedVacancies([...appliedVacancies, companyName]);
+      }
+    }
+  };
   // База данных стажировок
   const internships = [
     { id: 1, company: "Kaspi.kz", position: "Frontend Developer Intern", salary: "150 000 ₸", type: "Полный день", city: "Алматы", tag: "IT", hot: true, icon: "💳" },
@@ -176,9 +208,16 @@ export default function InternshipsPage() {
                       <span className="text-[10px] font-bold text-slate-500 block uppercase tracking-wider">Оклад</span>
                       <span className="text-base font-black text-white">{item.salary} <span className="text-xs text-slate-500 font-normal">/ мес</span></span>
                     </div>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all duration-200 active:scale-95">
-                      Откликнуться
-                    </button>
+                    <button
+  onClick={() => handleApply(item.company)}
+  className={`px-5 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 ${
+    appliedVacancies.includes(item.company)
+      ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20' 
+      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20'
+  }`}
+>
+  {appliedVacancies.includes(item.company) ? 'Отменить отклик' : 'Откликнуться'}
+</button>
                   </div>
                 </div>
               ))}

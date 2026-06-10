@@ -83,19 +83,28 @@ const floatingOrbs = [
 ];
 
 export default function InternshipsPage() {
+  const [activeTab, setActiveTab] = useState<"all" | "applied">("all");
   const [filter, setFilter] = useState("Все");
   const [searchQuery, setSearchQuery] = useState("");
   const [appliedJobIds, setAppliedJobIds] = useState<number[]>([]);
   
+  // Состояния авторизации
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
+  
+  // Создаем дефолтного пользователя, чтобы кнопка «Войти» изначально не висела
+  const [user, setUser] = useState<any>({
+    email: "andamasovruslan@mail.ru",
+    username: "andamasovruslan",
+    avatar: null
+  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const headerFileInputRef = useRef<HTMLInputElement>(null);
   const categories = ["Все", "Разработка", "Дизайн", "Аналитика", "Маркетинг"];
 
   const handleApplyToggle = (id: number) => {
@@ -106,11 +115,15 @@ export default function InternshipsPage() {
     }
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>, isHeader: boolean = false) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setAvatarUrl(url);
+      if (isHeader) {
+        setUser((prev: any) => ({ ...prev, avatar: url }));
+      } else {
+        setAvatarUrl(url);
+      }
     }
   };
 
@@ -132,30 +145,56 @@ export default function InternshipsPage() {
   const handleLogout = () => {
     setUser(null);
     setAvatarUrl(null);
+    setActiveTab("all");
   };
 
+  // Логика фильтрации: сначала по вкладке (Все / Мои отклики), затем по категориям и поиску
   const filteredData = initialInternships.filter(item => {
+    const matchesTab = activeTab === "all" || appliedJobIds.includes(item.id);
     const matchesCategory = filter === "Все" || item.category === filter;
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           item.company.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesTab && matchesCategory && matchesSearch;
   });
 
   return (
     <div className="relative w-full overflow-hidden min-h-screen text-white">
-      {/* Header */}
+      
+      {/* Шапка сайта — Убрана старая кнопка «Войти», добавлен интерактивный профиль */}
       <header className="absolute top-0 left-0 right-0 z-40 max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <span className="font-black text-xl tracking-tight">Intern<span className="text-blue-500">.kz</span></span>
-        <div>
+        
+        <div className="flex items-center gap-6">
+          {/* Навигационные ссылки */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+            <button onClick={() => setActiveTab("all")} className={`hover:text-white transition ${activeTab === "all" ? "text-blue-400 font-bold" : ""}`}>Стажировки</button>
+            <span className="cursor-not-allowed opacity-50">Блог</span>
+            <span className="cursor-not-allowed opacity-50">О нас</span>
+          </nav>
+
           {user ? (
-            <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl p-2 pr-4 backdrop-blur-md">
-              <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-sm font-bold overflow-hidden border border-slate-700">
+            <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl p-2 pr-4 backdrop-blur-md group relative">
+              {/* Клик на аватарку меняет её */}
+              <div 
+                onClick={() => headerFileInputRef.current?.click()}
+                className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-sm font-bold overflow-hidden border border-slate-700 cursor-pointer relative group-hover:border-blue-500 transition"
+                title="Изменить аватарку"
+              >
                 {user.avatar ? (
                   <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
                   user.username[0].toUpperCase()
                 )}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[9px] transition">edit</div>
               </div>
+              <input 
+                type="file" 
+                ref={headerFileInputRef} 
+                onChange={(e) => handleAvatarChange(e, true)} 
+                accept="image/*" 
+                className="hidden" 
+              />
+              
               <div className="flex flex-col max-w-[120px]">
                 <span className="text-xs font-bold text-slate-100 truncate">@{user.username}</span>
                 <button onClick={handleLogout} className="text-[10px] text-left text-red-400 font-semibold hover:underline">
@@ -189,20 +228,38 @@ export default function InternshipsPage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-32">
-        {/* Hero Section */}
-        <div className="mb-16">
+        {/* Заголовок */}
+        <div className="mb-12">
           <span className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-xs font-bold px-4 py-2 rounded-full mb-4 border border-blue-500/20 uppercase tracking-widest backdrop-blur-sm">
             Актуальные вакансии • 2026
           </span>
           <h1 className="text-4xl md:text-7xl font-black tracking-tight leading-[1.1]">
             Каталог <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">стажировок</span>
           </h1>
-          <p className="mt-6 text-lg text-slate-400 max-w-2xl leading-relaxed">
-            Найди свою первую работу в топовых компаниях Казахстана. Откликайся в один клик и отслеживай статус.
-          </p>
         </div>
 
-        {/* Filters */}
+        {/* Вкладки: Каталог / Мои Отклики */}
+        <div className="flex border-b border-slate-800/80 gap-6 mb-8 text-sm font-bold">
+          <button 
+            onClick={() => setActiveTab("all")}
+            className={`pb-4 transition-all relative ${activeTab === "all" ? "text-blue-400" : "text-slate-400 hover:text-white"}`}
+          >
+            Все стажировки
+            {activeTab === "all" && <motion.div layoutId="activeTabBorder" className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500" />}
+          </button>
+          <button 
+            onClick={() => setActiveTab("applied")}
+            className={`pb-4 transition-all relative flex items-center gap-2 ${activeTab === "applied" ? "text-blue-400" : "text-slate-400 hover:text-white"}`}
+          >
+            Мои отклики 
+            <span className="bg-slate-800 text-[10px] px-2 py-0.5 rounded-full text-slate-300 border border-slate-700/60">
+              {appliedJobIds.length}
+            </span>
+            {activeTab === "applied" && <motion.div layoutId="activeTabBorder" className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500" />}
+          </button>
+        </div>
+
+        {/* Поиск и Фильтры */}
         <div className="flex flex-col md:flex-row gap-4 mb-12">
           <div className="flex-grow relative">
             <input 
@@ -230,59 +287,69 @@ export default function InternshipsPage() {
           </div>
         </div>
 
-        {/* Cards Grid */}
+        {/* Сетка карточек */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
-            {filteredData.map((job) => {
-              const isApplied = appliedJobIds.includes(job.id);
-              return (
-                <motion.div
-                  key={job.id}
-                  layout
-                  initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                  className="group relative p-8 rounded-[32px] border border-slate-800/60 flex flex-col justify-between"
-                  style={{ background: "rgba(15,23,42,0.5)", backdropFilter: "blur(12px)" }}
-                >
-                  <div>
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-2xl border border-slate-700/50">
-                        {job.logo}
+            {filteredData.length > 0 ? (
+              filteredData.map((job) => {
+                const isApplied = appliedJobIds.includes(job.id);
+                return (
+                  <motion.div
+                    key={job.id}
+                    layout
+                    initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    whileHover={{ y: -5, scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                    className="group relative p-8 rounded-[32px] border border-slate-800/60 flex flex-col justify-between"
+                    style={{ background: "rgba(15,23,42,0.5)", backdropFilter: "blur(12px)" }}
+                  >
+                    <div>
+                      <div className="flex justify-between items-start mb-6">
+                        <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-2xl border border-slate-700/50">
+                          {job.logo}
+                        </div>
+                        <span className="text-[10px] font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20 uppercase tracking-tighter">
+                          {job.type}
+                        </span>
                       </div>
-                      <span className="text-[10px] font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20 uppercase tracking-tighter">
-                        {job.type}
-                      </span>
+                      
+                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                        {job.title}
+                      </h3>
+                      <p className="text-slate-400 text-sm font-medium mb-6">
+                        {job.company} • {job.location}
+                      </p>
                     </div>
-                    
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                      {job.title}
-                    </h3>
-                    <p className="text-slate-400 text-sm font-medium mb-6">
-                      {job.company} • {job.location}
-                    </p>
-                  </div>
 
-                  <div className="pt-6 border-t border-slate-800/60 flex items-center justify-between">
-                    <span className="text-white font-bold text-sm">
-                      {job.salary}
-                    </span>
-                    <button 
-                      onClick={() => handleApplyToggle(job.id)}
-                      className={`text-xs font-bold px-4 py-2.5 rounded-xl border transition-all ${
-                        isApplied 
-                        ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-400"
-                        : "bg-blue-600/10 border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white"
-                      }`}
-                    >
-                      {isApplied ? "✓ Вы откликнулись" : "Откликнуться"}
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })}
+                    <div className="pt-6 border-t border-slate-800/60 flex items-center justify-between">
+                      <span className="text-white font-bold text-sm">
+                        {job.salary}
+                      </span>
+                      <button 
+                        onClick={() => handleApplyToggle(job.id)}
+                        className={`text-xs font-bold px-4 py-2.5 rounded-xl border transition-all ${
+                          isApplied 
+                          ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-400"
+                          : "bg-blue-600/10 border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white"
+                        }`}
+                      >
+                        {isApplied ? "✓ Вы откликнулись" : "Откликнуться"}
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                className="col-span-full text-center py-12 text-slate-500 text-sm font-medium"
+              >
+                {activeTab === "applied" ? "Вы еще не откликнулись ни на одну вакансию." : "По вашему запросу ничего не найдено."}
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
@@ -337,7 +404,7 @@ export default function InternshipsPage() {
                         <input 
                           type="file" 
                           ref={fileInputRef} 
-                          onChange={handleAvatarChange} 
+                          onChange={(e) => handleAvatarChange(e, false)} 
                           accept="image/*" 
                           className="hidden" 
                         />

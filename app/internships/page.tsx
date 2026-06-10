@@ -13,6 +13,11 @@ interface Internship {
   salary: string;
   category: string;
   logo: string;
+  // Добавляем новые поля для раздела "Подробнее"
+  description: string;
+  requirements: string[];
+  responsibilities: string[];
+  techStack: string[];
 }
 
 const initialInternships: Internship[] = [
@@ -24,7 +29,20 @@ const initialInternships: Internship[] = [
     type: "Full-time",
     salary: "От 150,000 ₸",
     category: "Разработка",
-    logo: "💻"
+    logo: "💻",
+    description: "Мы ищем амбициозного Frontend-разработчика в команду Kaspi Maps. Вам предстоит работать над улучшением пользовательского опыта миллионов казахстанцев, оптимизировать производительность карт и внедрять новые фичи.",
+    requirements: [
+      "Уверенное знание JavaScript (ES6+) и TypeScript",
+      "Опыт работы с React и хуками (useState, useEffect, useMemo)",
+      "Понимание работы CSS-фреймворков (Tailwind CSS) и препроцессоров",
+      "Базовые навыки работы с Git"
+    ],
+    responsibilities: [
+      "Разработка и поддержка интерактивных компонентов интерфейса",
+      "Оптимизация скорости загрузки клиентской части приложения",
+      "Взаимодействие с UI/UX дизайнерами и Backend-разработчиками"
+    ],
+    techStack: ["React", "TypeScript", "Tailwind CSS", "Redux Toolkit", "Vite"]
   },
   {
     id: 2,
@@ -34,7 +52,20 @@ const initialInternships: Internship[] = [
     type: "Flexible",
     salary: "По результатам",
     category: "Дизайн",
-    logo: "🎨"
+    logo: "🎨",
+    description: "Присоединяйтесь к дизайну продуктов, которыми пользуются каждый день. В Kolesa Group вы будете исследовать боли пользователей, проектировать интерфейсы высокой сложности и тестировать гипотезы.",
+    requirements: [
+      "Отличное владение Figma (компоненты, варианты, auto-layout)",
+      "Понимание принципов веб- и мобильной доступности (UI/UX)",
+      "Наличие портфолио с учебными или коммерческими кейсами",
+      "Умение обосновывать свои дизайнерские решения"
+    ],
+    responsibilities: [
+      "Создание wireframe'ов и высокоточных интерактивных прототипов",
+      "Проведение качественных интервью и юзабилити-тестирований",
+      "Развитие и поддержка внутренней дизайн-системы"
+    ],
+    techStack: ["Figma", "FigJam", "Principle", "Adobe Photoshop"]
   },
   {
     id: 3,
@@ -44,7 +75,20 @@ const initialInternships: Internship[] = [
     type: "Internship",
     salary: "120,000 ₸",
     category: "Аналитика",
-    logo: "📈"
+    logo: "📈",
+    description: "Стажировка в департаменте больших данных Halyk. Отличный шанс поработать с терабайтами реальной информации, научиться строить сложные дашборды и находить скрытые инсайты для бизнеса.",
+    requirements: [
+      "Базовые знания SQL (написание простых SELECT, JOIN, GROUP BY)",
+      "Знание основ языка Python (библиотеки Pandas, NumPy, Matplotlib)",
+      "Понимание базовых принципов математической статистики",
+      "Внимательность к деталям и аналитический склад ума"
+    ],
+    responsibilities: [
+      "Сбор, очистка и предварительная обработка сырых данных",
+      "Разработка автоматизированных дашбордов в BI-системах",
+      "Подготовка регулярной аналитической отчетности для менеджмента"
+    ],
+    techStack: ["SQL", "Python", "Pandas", "PowerBI", "PostgreSQL"]
   },
   {
     id: 4,
@@ -54,7 +98,20 @@ const initialInternships: Internship[] = [
     type: "Full-time",
     salary: "От 180,000 ₸",
     category: "Разработка",
-    logo: "⚙️"
+    logo: "⚙️",
+    description: "Ищем начинающего инженера на бэкенд высоконагруженных сервисов покупки билетов Chocotravel. Поможем вырасти в крепкого backend-разработчика под руководством опытных менторов.",
+    requirements: [
+      "Знание синтаксиса Go или Python на базовом уровне",
+      "Понимание принципов работы реляционных БД",
+      "Представление об архитектурном стиле REST API",
+      "Желание изучать Docker и основы контейнеризации"
+    ],
+    responsibilities: [
+      "Написание чистого и тестируемого серверного кода",
+      "Проектирование простых схем баз данных и оптимизация запросов",
+      "Покрытие написанного функционала интеграционными тестами"
+    ],
+    techStack: ["Go", "Python", "FastAPI", "PostgreSQL", "Docker", "Redis"]
   },
   {
     id: 5,
@@ -64,7 +121,20 @@ const initialInternships: Internship[] = [
     type: "Flexible",
     salary: "90,000 ₸",
     category: "Маркетинг",
-    logo: "📱"
+    logo: "📱",
+    description: "Ищем креативного контент-мейкера, который вдохнет новую жизнь в наши социальные сети. Если ты следишь за трендами TikTok, Reels и умеешь писать вовлекающие тексты — мы ждем тебя.",
+    requirements: [
+      "Опыт создания мобильного видеоконтента (монтаж в CapCut / VN)",
+      "Грамотный русский и казахский языки (письменный)",
+      "Понимание алгоритмов продвижения Instagram, TikTok, YouTube Shorts",
+      "Базовое чувство стиля и эстетики"
+    ],
+    responsibilities: [
+      "Разработка ежемесячного контент-плана для соцсетей",
+      "Съемка, монтаж и публикация ежедневных видеороликов",
+      "Модерация комментариев и общение с аудиторией в директе"
+    ],
+    techStack: ["CapCut", "Canva", "Instagram API", "TikTok Trends"]
   },
   {
     id: 6,
@@ -74,7 +144,20 @@ const initialInternships: Internship[] = [
     type: "Internship",
     salary: "По результатам",
     category: "Аналитика",
-    logo: "💼"
+    logo: "💼",
+    description: "Стань правой рукой продуктового менеджера в e-commerce гиганте. Ты будешь помогать развивать мобильное приложение Technodom, анализировать конкурентов и собирать требования пользователей.",
+    requirements: [
+      "Понимание концепций MVP, Product-Market Fit, Юнит-экономики",
+      "Умение структурировать информацию и вести документацию",
+      "Проактивность и сильные коммуникативные навыки",
+      "Базовый опыт работы с Notion или Jira будет плюсом"
+    ],
+    responsibilities: [
+      "Анализ фич конкурентов на рынке СНГ и мира",
+      "Помощь в составлении технических заданий (PRD) для разработки",
+      "Сбор обратной связи от пользователей и классификация багов"
+    ],
+    techStack: ["Notion", "Jira", "Miro", "Google Analytics"]
   }
 ];
 
@@ -89,9 +172,12 @@ export default function InternshipsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [appliedJobIds, setAppliedJobIds] = useState<number[]>([]);
   
-  // Состояния для авторизации и профиля
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  
+  // Новое состояние для модалки "Подробнее"
+  const [selectedJob, setSelectedJob] = useState<Internship | null>(null);
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -99,15 +185,12 @@ export default function InternshipsPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-
-  // Новое состояние для редактирования никнейма
   const [editUsername, setEditUsername] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
   const categories = ["Все", "Разработка", "Дизайн", "Аналитика", "Маркетинг"];
 
-  // Проверка сессии при загрузке страницы
   useEffect(() => {
     async function checkUser() {
       const { data: { session } } = await supabase.auth.getSession();
@@ -138,7 +221,6 @@ export default function InternshipsPage() {
     checkUser();
   }, []);
 
-  // Логика откликов
   const handleApplyToggle = async (jobId: number) => {
     if (!user) {
       setIsSignUp(false);
@@ -163,7 +245,6 @@ export default function InternshipsPage() {
     }
   };
 
-  // Загрузка картинок в бакет Supabase
   const uploadAvatar = async (file: File, userId: string): Promise<string | null> => {
     try {
       const fileExt = file.name.split('.').pop();
@@ -183,7 +264,6 @@ export default function InternshipsPage() {
     }
   };
 
-  // Сохранение изменений в профиле (Никнейм + Новая Аватарка)
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -231,7 +311,6 @@ export default function InternshipsPage() {
     }
   };
 
-  // Авторизация / Регистрация
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -309,7 +388,7 @@ export default function InternshipsPage() {
 
   return (
     <div className="relative w-full overflow-hidden min-h-screen text-white">
-      {/* Шапка — Лишняя кнопка «Войти» убрана полностью */}
+      {/* Шапка */}
       <header className="absolute top-0 left-0 right-0 z-40 max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <span className="font-black text-xl tracking-tight">Intern<span className="text-blue-500">.kz</span></span>
         
@@ -321,7 +400,6 @@ export default function InternshipsPage() {
           </nav>
 
           {user ? (
-            /* Клик на всю эту плашку откроет модалку редактирования профиля */
             <div 
               onClick={() => setIsProfileModalOpen(true)}
               className="flex items-center gap-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl p-2 pr-4 backdrop-blur-md hover:border-slate-600 transition cursor-pointer select-none"
@@ -334,7 +412,6 @@ export default function InternshipsPage() {
                 )}
               </div>
               <div className="flex flex-col max-w-[140px]">
-                {/* Сюда динамически выводится кастомный никнейм из БД */}
                 <span className="text-xs font-bold text-slate-100 truncate">@{user.username}</span>
                 <span className="text-[10px] text-slate-400 font-medium">Редактировать</span>
               </div>
@@ -439,8 +516,9 @@ export default function InternshipsPage() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     whileHover={{ y: -5, scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                    className="group relative p-8 rounded-[32px] border border-slate-800/60 flex flex-col justify-between"
+                    className="group relative p-8 rounded-[32px] border border-slate-800/60 flex flex-col justify-between cursor-pointer"
                     style={{ background: "rgba(15,23,42,0.5)", backdropFilter: "blur(12px)" }}
+                    onClick={() => setSelectedJob(job)} // Клик по всей карточке открывает подробности
                   >
                     <div>
                       <div className="flex justify-between items-start mb-6">
@@ -460,7 +538,11 @@ export default function InternshipsPage() {
                       </p>
                     </div>
 
-                    <div className="pt-6 border-t border-slate-800/60 flex items-center justify-between">
+                    {/* Защита от всплытия клика, чтобы при клике на кнопку отклика не открывалась модалка "Подробнее" */}
+                    <div 
+                      className="pt-6 border-t border-slate-800/60 flex items-center justify-between"
+                      onClick={(e) => e.stopPropagation()} 
+                    >
                       <span className="text-white font-bold text-sm">
                         {job.salary}
                       </span>
@@ -487,7 +569,115 @@ export default function InternshipsPage() {
         </div>
       </div>
 
-      {/* НОВАЯ МОДАЛКА: Редактирование профиля интерна */}
+      {/* НОВАЯ МОДАЛКА: Подробная информация о стажировке */}
+      <AnimatePresence>
+        {selectedJob && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div onClick={() => setSelectedJob(null)} className="absolute inset-0 bg-black/75 backdrop-blur-md" />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 30 }}
+              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto p-8 md:p-10 rounded-[32px] border border-slate-800 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-10 custom-scrollbar"
+            >
+              {/* Шапка модалки */}
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-3xl border border-slate-700/50">
+                    {selectedJob.logo}
+                  </div>
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-black text-white">{selectedJob.title}</h2>
+                    <p className="text-slate-400 text-sm font-medium">{selectedJob.company} • {selectedJob.location}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setSelectedJob(null)}
+                  className="text-slate-500 hover:text-white text-sm bg-slate-800/60 hover:bg-slate-800 px-3 py-1.5 rounded-xl transition border border-slate-700/30"
+                >
+                  Закрыть
+                </button>
+              </div>
+
+              {/* Теги */}
+              <div className="flex flex-wrap gap-2 mb-8">
+                <span className="text-xs font-bold text-blue-400 bg-blue-400/10 px-3 py-1.5 rounded-xl border border-blue-400/20 uppercase tracking-wider">
+                  {selectedJob.type}
+                </span>
+                <span className="text-xs font-bold text-indigo-400 bg-indigo-400/10 px-3 py-1.5 rounded-xl border border-indigo-400/20 uppercase tracking-wider">
+                  {selectedJob.category}
+                </span>
+                <span className="text-xs font-bold text-emerald-400 bg-emerald-400/10 px-3 py-1.5 rounded-xl border border-emerald-400/20 tracking-wider">
+                  {selectedJob.salary}
+                </span>
+              </div>
+
+              {/* Описание */}
+              <div className="space-y-6 text-sm text-slate-300 leading-relaxed">
+                <div>
+                  <h4 className="text-white font-bold text-base mb-2">О стажировке</h4>
+                  <p>{selectedJob.description}</p>
+                </div>
+
+                {/* Требования */}
+                <div>
+                  <h4 className="text-white font-bold text-base mb-2">Требования к кандидату</h4>
+                  <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                    {selectedJob.requirements.map((req, index) => (
+                      <li key={index}>{req}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Обязанности */}
+                <div>
+                  <h4 className="text-white font-bold text-base mb-2">Что предстоит делать</h4>
+                  <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                    {selectedJob.responsibilities.map((resp, index) => (
+                      <li key={index}>{resp}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Технологический стек */}
+                <div>
+                  <h4 className="text-white font-bold text-base mb-3">Технологический стек</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedJob.techStack.map((tech, index) => (
+                      <span key={index} className="text-xs font-mono bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-400">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Нижняя панель действий */}
+              <div className="mt-8 pt-6 border-t border-slate-800/80 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono uppercase text-slate-500 block">Ежемесячный оклад</span>
+                  <span className="text-white font-black text-lg md:text-xl">{selectedJob.salary}</span>
+                </div>
+                <button 
+                  onClick={() => {
+                    handleApplyToggle(selectedJob.id);
+                    setSelectedJob(null); // Закрываем модалку после отклика
+                  }}
+                  className={`text-sm font-bold px-6 py-3.5 rounded-2xl border transition-all shadow-lg ${
+                    appliedJobIds.includes(selectedJob.id) 
+                    ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-400"
+                    : "bg-blue-600 border-blue-500 text-white hover:bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                  }`}
+                >
+                  {appliedJobIds.includes(selectedJob.id) ? "✓ Вы откликнулись" : "Откликнуться на вакансию"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Модалка профиля */}
       <AnimatePresence>
         {isProfileModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

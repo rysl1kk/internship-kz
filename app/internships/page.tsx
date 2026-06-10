@@ -13,7 +13,6 @@ interface Internship {
   salary: string;
   category: string;
   logo: string;
-  // Добавляем новые поля для раздела "Подробнее"
   description: string;
   requirements: string[];
   responsibilities: string[];
@@ -174,8 +173,6 @@ export default function InternshipsPage() {
   
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  
-  // Новое состояние для модалки "Подробнее"
   const [selectedJob, setSelectedJob] = useState<Internship | null>(null);
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -388,44 +385,49 @@ export default function InternshipsPage() {
 
   return (
     <div className="relative w-full overflow-hidden min-h-screen text-white">
-      {/* Шапка */}
-      <header className="absolute top-0 left-0 right-0 z-40 max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <span className="font-black text-xl tracking-tight">Intern<span className="text-blue-500">.kz</span></span>
-        
-        <div className="flex items-center gap-6">
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
-            <button onClick={() => setActiveTab("all")} className={`hover:text-white transition ${activeTab === "all" ? "text-blue-400 font-bold" : ""}`}>Стажировки</button>
-            <span className="cursor-not-allowed opacity-50">Блог</span>
-            <span className="cursor-not-allowed opacity-50">О нас</span>
-          </nav>
+      {/* Единственная функциональная шапка (нижняя на твоём скриншоте) */}
+      <div className="w-full border-b border-slate-900 bg-[#060b18]/60 backdrop-blur-md">
+        <header className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-12">
+            <span className="font-black text-xl tracking-tight cursor-pointer" onClick={() => setActiveTab("all")}>
+              Intern<span className="text-blue-500">.kz</span>
+            </span>
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+              <button onClick={() => setActiveTab("all")} className={`hover:text-white transition ${activeTab === "all" ? "text-blue-400 font-bold" : ""}`}>Стажировки</button>
+              <span className="cursor-not-allowed opacity-50">Блог</span>
+              <span className="cursor-not-allowed opacity-50">О нас</span>
+            </nav>
+          </div>
 
-          {user ? (
-            <div 
-              onClick={() => setIsProfileModalOpen(true)}
-              className="flex items-center gap-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl p-2 pr-4 backdrop-blur-md hover:border-slate-600 transition cursor-pointer select-none"
-            >
-              <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-sm font-bold overflow-hidden border border-slate-700">
-                {user.avatar ? (
-                  <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  user.username[0]?.toUpperCase()
-                )}
+          <div>
+            {user ? (
+              <div 
+                onClick={() => setIsProfileModalOpen(true)}
+                className="flex items-center gap-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl p-2 pr-4 hover:border-slate-600 transition cursor-pointer select-none"
+              >
+                <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-sm font-bold overflow-hidden border border-slate-700">
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    user.username[0]?.toUpperCase()
+                  )}
+                </div>
+                <div className="flex flex-col max-w-[140px]">
+                  <span className="text-xs font-bold text-slate-100 truncate">@{user.username}</span>
+                  <span className="text-[10px] text-slate-400 font-medium">Редактировать</span>
+                </div>
               </div>
-              <div className="flex flex-col max-w-[140px]">
-                <span className="text-xs font-bold text-slate-100 truncate">@{user.username}</span>
-                <span className="text-[10px] text-slate-400 font-medium">Редактировать</span>
-              </div>
-            </div>
-          ) : (
-            <button 
-              onClick={() => { setIsSignUp(false); setIsAuthModalOpen(true); }}
-              className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-[0_0_20px_rgba(59,130,246,0.3)]"
-            >
-              Войти
-            </button>
-          )}
-        </div>
-      </header>
+            ) : (
+              <button 
+                onClick={() => { setIsSignUp(false); setIsAuthModalOpen(true); }}
+                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+              >
+                Войти
+              </button>
+            )}
+          </div>
+        </header>
+      </div>
 
       {/* Фон */}
       <div className="fixed inset-0 -z-10 bg-[#060b18]">
@@ -441,7 +443,7 @@ export default function InternshipsPage() {
         ))}
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-32">
+      <div className="mx-auto max-w-7xl px-6 py-20">
         {/* Заголовок */}
         <div className="mb-12">
           <span className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-xs font-bold px-4 py-2 rounded-full mb-4 border border-blue-500/20 uppercase tracking-widest backdrop-blur-sm">
@@ -518,7 +520,7 @@ export default function InternshipsPage() {
                     transition={{ type: "spring", stiffness: 300, damping: 22 }}
                     className="group relative p-8 rounded-[32px] border border-slate-800/60 flex flex-col justify-between cursor-pointer"
                     style={{ background: "rgba(15,23,42,0.5)", backdropFilter: "blur(12px)" }}
-                    onClick={() => setSelectedJob(job)} // Клик по всей карточке открывает подробности
+                    onClick={() => setSelectedJob(job)}
                   >
                     <div>
                       <div className="flex justify-between items-start mb-6">
@@ -538,7 +540,6 @@ export default function InternshipsPage() {
                       </p>
                     </div>
 
-                    {/* Защита от всплытия клика, чтобы при клике на кнопку отклика не открывалась модалка "Подробнее" */}
                     <div 
                       className="pt-6 border-t border-slate-800/60 flex items-center justify-between"
                       onClick={(e) => e.stopPropagation()} 
@@ -569,7 +570,7 @@ export default function InternshipsPage() {
         </div>
       </div>
 
-      {/* НОВАЯ МОДАЛКА: Подробная информация о стажировке */}
+      {/* Модалка: Подробная информация */}
       <AnimatePresence>
         {selectedJob && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -580,7 +581,6 @@ export default function InternshipsPage() {
               exit={{ scale: 0.95, opacity: 0, y: 30 }}
               className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto p-8 md:p-10 rounded-[32px] border border-slate-800 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-10 custom-scrollbar"
             >
-              {/* Шапка модалки */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-3xl border border-slate-700/50">
@@ -599,7 +599,6 @@ export default function InternshipsPage() {
                 </button>
               </div>
 
-              {/* Теги */}
               <div className="flex flex-wrap gap-2 mb-8">
                 <span className="text-xs font-bold text-blue-400 bg-blue-400/10 px-3 py-1.5 rounded-xl border border-blue-400/20 uppercase tracking-wider">
                   {selectedJob.type}
@@ -612,14 +611,12 @@ export default function InternshipsPage() {
                 </span>
               </div>
 
-              {/* Описание */}
               <div className="space-y-6 text-sm text-slate-300 leading-relaxed">
                 <div>
                   <h4 className="text-white font-bold text-base mb-2">О стажировке</h4>
                   <p>{selectedJob.description}</p>
                 </div>
 
-                {/* Требования */}
                 <div>
                   <h4 className="text-white font-bold text-base mb-2">Требования к кандидату</h4>
                   <ul className="list-disc pl-5 space-y-1 text-slate-400">
@@ -629,7 +626,6 @@ export default function InternshipsPage() {
                   </ul>
                 </div>
 
-                {/* Обязанности */}
                 <div>
                   <h4 className="text-white font-bold text-base mb-2">Что предстоит делать</h4>
                   <ul className="list-disc pl-5 space-y-1 text-slate-400">
@@ -639,7 +635,6 @@ export default function InternshipsPage() {
                   </ul>
                 </div>
 
-                {/* Технологический стек */}
                 <div>
                   <h4 className="text-white font-bold text-base mb-3">Технологический стек</h4>
                   <div className="flex flex-wrap gap-2">
@@ -652,7 +647,6 @@ export default function InternshipsPage() {
                 </div>
               </div>
 
-              {/* Нижняя панель действий */}
               <div className="mt-8 pt-6 border-t border-slate-800/80 flex items-center justify-between">
                 <div>
                   <span className="text-xs font-mono uppercase text-slate-500 block">Ежемесячный оклад</span>
@@ -661,7 +655,7 @@ export default function InternshipsPage() {
                 <button 
                   onClick={() => {
                     handleApplyToggle(selectedJob.id);
-                    setSelectedJob(null); // Закрываем модалку после отклика
+                    setSelectedJob(null);
                   }}
                   className={`text-sm font-bold px-6 py-3.5 rounded-2xl border transition-all shadow-lg ${
                     appliedJobIds.includes(selectedJob.id) 

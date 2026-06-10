@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createClient } from "@supabase/supabase-js"; // Убедись, что пакет установлен
+
+// Инициализация Supabase (замени url и anon_key на свои переменные окружения, если необходимо)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://your-project.supabase.co";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "your-anon-key";
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 interface Internship {
   id: number;
@@ -110,52 +116,6 @@ const initialInternships: Internship[] = [
       "Покрытие написанного функционала интеграционными тестами"
     ],
     techStack: ["Go", "Python", "FastAPI", "PostgreSQL", "Docker", "Redis"]
-  },
-  {
-    id: 5,
-    title: "SMM Specialist",
-    company: "Beevile",
-    location: "Шымкент",
-    type: "Flexible",
-    salary: "90,000 ₸",
-    category: "Маркетинг",
-    logo: "📱",
-    description: "Ищем креативного контент-мейкера, который вдохнет новую жизнь в наши социальные сети. Если ты следишь за трендами TikTok, Reels и умеешь писать вовлекающие тексты — мы ждем тебя.",
-    requirements: [
-      "Опыт создания мобильного видеоконтента (монтаж в CapCut / VN)",
-      "Грамотный русский и казахский языки (письменный)",
-      "Понимание алгоритмов продвижения Instagram, TikTok, YouTube Shorts",
-      "Базовое чувство стиля и эстетики"
-    ],
-    responsibilities: [
-      "Разработка ежемесячного контент-плана для соцсетей",
-      "Съемка, монтаж и публикация ежедневных видеороликов",
-      "Модерация комментариев и общение с аудиторией в директе"
-    ],
-    techStack: ["CapCut", "Canva", "Instagram API", "TikTok Trends"]
-  },
-  {
-    id: 6,
-    title: "Product Manager Assistant",
-    company: "Technodom",
-    location: "Алматы",
-    type: "Internship",
-    salary: "По результатам",
-    category: "Аналитика",
-    logo: "💼",
-    description: "Стань правой рукой продуктового менеджера в e-commerce гиганте. Ты будешь помогать развивать мобильное приложение Technodom, анализировать конкурентов и собирать требования пользователей.",
-    requirements: [
-      "Понимание концепций MVP, Product-Market Fit, Юнит-экономики",
-      "Умение структурировать информацию и вести документацию",
-      "Проактивность и сильные коммуникативные навыки",
-      "Базовый опыт работы с Notion или Jira будет плюсом"
-    ],
-    responsibilities: [
-      "Анализ фич конкурентов на рынке СНГ и мира",
-      "Помощь в составлении технических заданий (PRD) для разработки",
-      "Сбор обратной связи от пользователей и классификация багов"
-    ],
-    techStack: ["Notion", "Jira", "Miro", "Google Analytics"]
   }
 ];
 
@@ -168,8 +128,57 @@ export default function InternshipsPage() {
   const [filter, setFilter] = useState("Все");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJob, setSelectedJob] = useState<Internship | null>(null);
+  
+  // Состояния для авторизации
+  const [user, setUser] = useState<any>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const categories = ["Все", "Разработка", "Дизайн", "Аналитика", "Маркетинг"];
+  const categories = ["Все", "Разработка", "Дизайн", "Аналитика"];
+
+  // Проверка текущего юзера при загрузке страницы
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        alert("Регистрация успешна! Проверьте почту для подтверждения.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+      setIsAuthModalOpen(false);
+      setEmail("");
+      setPassword("");
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setShowDropdown(false);
+  };
 
   const filteredData = initialInternships.filter(item => {
     const matchesCategory = filter === "Все" || item.category === filter;
@@ -180,7 +189,8 @@ export default function InternshipsPage() {
 
   return (
     <div className="relative w-full overflow-hidden min-h-screen text-white bg-[#060b18]">
-      {/* Шапка - только Логотип и Навигация */}
+      
+      {/* Шапка с динамической кнопкой Вход / Профиль */}
       <div className="w-full border-b border-slate-900/80 bg-[#060b18]/60 backdrop-blur-md sticky top-0 z-40">
         <header className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-12">
@@ -192,6 +202,43 @@ export default function InternshipsPage() {
                 Стажировки
               </button>
             </nav>
+          </div>
+
+          {/* Правая часть: Динамический профиль пользователя */}
+          <div className="relative">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="flex items-center gap-3 bg-slate-900/80 border border-slate-800 hover:border-slate-700 px-4 py-2 rounded-2xl transition"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    {user.email[0].toUpperCase()}
+                  </div>
+                  <span className="text-xs text-slate-300 hidden md:inline-block max-w-[120px] truncate">
+                    {user.email}
+                  </span>
+                </button>
+
+                {showDropdown && (
+                  <div className="absolute right-0 top-14 w-48 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-50">
+                    <button 
+                      onClick={handleSignOut}
+                      className="w-full text-left text-xs font-bold text-red-400 hover:bg-red-500/10 px-4 py-3 rounded-xl transition"
+                    >
+                      Выйти
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button 
+                onClick={() => setIsAuthModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+              >
+                Войти
+              </button>
+            )}
           </div>
         </header>
       </div>
@@ -210,7 +257,7 @@ export default function InternshipsPage() {
         ))}
       </div>
 
-      {/* Главный контент каталога */}
+      {/* Каталог стажировок */}
       <div className="mx-auto max-w-7xl px-6 py-20">
         <div className="mb-12">
           <span className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-xs font-bold px-4 py-2 rounded-full mb-4 border border-blue-500/20 uppercase tracking-widest backdrop-blur-sm">
@@ -252,58 +299,114 @@ export default function InternshipsPage() {
           </div>
         </div>
 
-        {/* Сетка карточек */}
+        {/* Сетка вакансий */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
-            {filteredData.length > 0 ? (
-              filteredData.map((job) => (
-                <motion.div
-                  key={job.id}
-                  layout
-                  initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                  className="group relative p-8 rounded-[32px] border border-slate-800/60 flex flex-col justify-between cursor-pointer"
-                  style={{ background: "rgba(15,23,42,0.5)", backdropFilter: "blur(12px)" }}
-                  onClick={() => setSelectedJob(job)}
-                >
-                  <div>
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-2xl border border-slate-700/50">
-                        {job.logo}
-                      </div>
-                      <span className="text-[10px] font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20 uppercase tracking-tighter">
-                        {job.type}
-                      </span>
+            {filteredData.map((job) => (
+              <motion.div
+                key={job.id}
+                layout
+                initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="group relative p-8 rounded-[32px] border border-slate-800/60 flex flex-col justify-between cursor-pointer"
+                style={{ background: "rgba(15,23,42,0.5)", backdropFilter: "blur(12px)" }}
+                onClick={() => setSelectedJob(job)}
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-2xl border border-slate-700/50">
+                      {job.logo}
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                      {job.title}
-                    </h3>
-                    <p className="text-slate-400 text-sm font-medium mb-6">
-                      {job.company} • {job.location}
-                    </p>
+                    <span className="text-[10px] font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20 uppercase tracking-tighter">
+                      {job.type}
+                    </span>
                   </div>
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                    {job.title}
+                  </h3>
+                  <p className="text-slate-400 text-sm font-medium mb-6">
+                    {job.company} • {job.location}
+                  </p>
+                </div>
 
-                  <div className="pt-6 border-t border-slate-800/60 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
-                    <span className="text-white font-bold text-sm">{job.salary}</span>
-                    <button onClick={() => setSelectedJob(job)} className="text-xs font-bold px-4 py-2.5 rounded-xl border bg-blue-600/10 border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all">
-                      Подробнее
-                    </button>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              <div className="col-span-full text-center py-12 text-slate-500 text-sm font-medium">
-                По вашему запросу ничего не найдено.
-              </div>
-            )}
+                <div className="pt-6 border-t border-slate-800/60 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                  <span className="text-white font-bold text-sm">{job.salary}</span>
+                  <button onClick={() => setSelectedJob(job)} className="text-xs font-bold px-4 py-2.5 rounded-xl border bg-blue-600/10 border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all">
+                    Подробнее
+                  </button>
+                </div>
+              </motion.div>
+            ))}
           </AnimatePresence>
         </div>
       </div>
 
-      {/* Модальное окно */}
+      {/* Модальное окно Авторизации */}
+      <AnimatePresence>
+        {isAuthModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div onClick={() => setIsAuthModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-md p-8 md:p-10 rounded-[32px] border border-slate-800 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-10"
+            >
+              <h3 className="text-2xl font-black mb-2">
+                {isSignUp ? "Создать аккаунт" : "С возвращением"}
+              </h3>
+              <p className="text-slate-400 text-xs font-medium mb-6">
+                {isSignUp ? "Зарегистрируйтесь, чтобы откликаться на стажировки" : "Войдите в свой личный профиль"}
+              </p>
+
+              <form onSubmit={handleAuth} className="space-y-4">
+                <div>
+                  <label className="text-[11px] uppercase tracking-wider font-bold text-slate-400 block mb-2">Email адрес</label>
+                  <input 
+                    type="email" 
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com" 
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] uppercase tracking-wider font-bold text-slate-400 block mb-2">Пароль</label>
+                  <input 
+                    type="password" 
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••" 
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-4 rounded-xl transition uppercase tracking-wider mt-2 shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                >
+                  {loading ? "Загрузка..." : isSignUp ? "Зарегистрироваться" : "Войти"}
+                </button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <button 
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="text-xs font-bold text-slate-400 hover:text-blue-400 transition"
+                >
+                  {isSignUp ? "Уже есть аккаунт? Войти" : "Нет аккаунта? Создать"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Модальное окно деталей вакансии */}
       <AnimatePresence>
         {selectedJob && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -347,12 +450,6 @@ export default function InternshipsPage() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-white font-bold text-base mb-2">Обязанности</h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-400">
-                    {selectedJob.responsibilities.map((resp, i) => <li key={i}>{resp}</li>)}
-                  </ul>
-                </div>
-                <div>
                   <h4 className="text-white font-bold text-base mb-3">Технологический стек</h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedJob.techStack.map((tech, i) => (
@@ -369,8 +466,17 @@ export default function InternshipsPage() {
                   <span className="text-xs font-mono uppercase text-slate-500 block">Оклад</span>
                   <span className="text-white font-black text-lg md:text-xl">{selectedJob.salary}</span>
                 </div>
-                <button onClick={() => alert("Вы откликнулись!")} className="text-sm font-bold px-6 py-3.5 rounded-2xl border bg-blue-600 border-blue-500 text-white hover:bg-blue-500 transition-all">
-                  Откликнуться
+                <button 
+                  onClick={() => {
+                    if (!user) {
+                      setIsAuthModalOpen(true);
+                    } else {
+                      alert("Вы успешно откликнулись!");
+                    }
+                  }} 
+                  className="text-sm font-bold px-6 py-3.5 rounded-2xl border bg-blue-600 border-blue-500 text-white hover:bg-blue-500 transition-all"
+                >
+                  {user ? "Откликнуться" : "Войдите, чтобы откликнуться"}
                 </button>
               </div>
             </motion.div>

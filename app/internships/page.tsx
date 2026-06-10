@@ -385,17 +385,33 @@ export default function InternshipsPage() {
 
   return (
     <div className="relative w-full overflow-hidden min-h-screen text-white">
-      {/* Единственная функциональная шапка (нижняя на твоём скриншоте) */}
+      {/* Главная рабочая панель навигации (бывшая нижняя) */}
       <div className="w-full border-b border-slate-900 bg-[#060b18]/60 backdrop-blur-md">
         <header className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-12">
             <span className="font-black text-xl tracking-tight cursor-pointer" onClick={() => setActiveTab("all")}>
               Intern<span className="text-blue-500">.kz</span>
             </span>
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
-              <button onClick={() => setActiveTab("all")} className={`hover:text-white transition ${activeTab === "all" ? "text-blue-400 font-bold" : ""}`}>Стажировки</button>
-              <span className="cursor-not-allowed opacity-50">Блог</span>
-              <span className="cursor-not-allowed opacity-50">О нас</span>
+            {/* Навигационные кнопки, перенесенные из старой шапки */}
+            <nav className="flex items-center gap-6 text-sm font-medium">
+              <button 
+                onClick={() => setActiveTab("all")} 
+                className={`transition ${activeTab === "all" ? "text-blue-400 font-bold" : "text-slate-400 hover:text-white"}`}
+              >
+                Стажировки
+              </button>
+              <button 
+                onClick={() => alert("Раздел 'Блог' находится в разработке")} 
+                className="text-slate-400 hover:text-white transition"
+              >
+                Блог
+              </button>
+              <button 
+                onClick={() => alert("Раздел 'О нас' находится в разработке")} 
+                className="text-slate-400 hover:text-white transition"
+              >
+                О нас
+              </button>
             </nav>
           </div>
 
@@ -429,7 +445,7 @@ export default function InternshipsPage() {
         </header>
       </div>
 
-      {/* Фон */}
+      {/* Фон сайта */}
       <div className="fixed inset-0 -z-10 bg-[#060b18]">
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(99,102,241,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.8) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
         {floatingOrbs.map((orb, i) => (
@@ -444,7 +460,7 @@ export default function InternshipsPage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-20">
-        {/* Заголовок */}
+        {/* Контентная часть */}
         <div className="mb-12">
           <span className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-xs font-bold px-4 py-2 rounded-full mb-4 border border-blue-500/20 uppercase tracking-widest backdrop-blur-sm">
             Актуальные вакансии • 2026
@@ -454,7 +470,7 @@ export default function InternshipsPage() {
           </h1>
         </div>
 
-        {/* Вкладки */}
+        {/* Вкладки переключения контента */}
         <div className="flex border-b border-slate-800/80 gap-6 mb-8 text-sm font-bold">
           <button 
             onClick={() => setActiveTab("all")}
@@ -475,7 +491,7 @@ export default function InternshipsPage() {
           </button>
         </div>
 
-        {/* Поиск и Фильтры */}
+        {/* Поиск и Фильтры по категориям */}
         <div className="flex flex-col md:flex-row gap-4 mb-12">
           <div className="flex-grow relative">
             <input 
@@ -503,7 +519,7 @@ export default function InternshipsPage() {
           </div>
         </div>
 
-        {/* Сетка вакансий */}
+        {/* Список карточек стажировок */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {filteredData.length > 0 ? (
@@ -570,7 +586,7 @@ export default function InternshipsPage() {
         </div>
       </div>
 
-      {/* Модалка: Подробная информация */}
+      {/* Модалка: Детали вакансии */}
       <AnimatePresence>
         {selectedJob && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -671,7 +687,7 @@ export default function InternshipsPage() {
         )}
       </AnimatePresence>
 
-      {/* Модалка профиля */}
+      {/* Модалка настроек профиля */}
       <AnimatePresence>
         {isProfileModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -735,7 +751,7 @@ export default function InternshipsPage() {
         )}
       </AnimatePresence>
 
-      {/* Модалка авторизации */}
+      {/* Модалка входа / регистрации (Supabase Auth) */}
       <AnimatePresence>
         {isAuthModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

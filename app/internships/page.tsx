@@ -146,7 +146,7 @@ const initialInternships: Internship[] = [
     description: "Стань правой рукой продуктового менеджера в e-commerce гиганте. Ты будешь помогать развивать мобильное приложение Technodom, анализировать конкурентов и собирать требования пользователей.",
     requirements: [
       "Понимание концепций MVP, Product-Market Fit, Юнит-экономики",
-      "Умение структурировать информацию и вести документацию",
+      "Умение структуруировать информацию и вести документацию",
       "Проактивность и сильные коммуникативные навыки",
       "Базовый опыт работы с Notion или Jira будет плюсом"
     ],
@@ -180,7 +180,7 @@ export default function InternshipsPage() {
 
   return (
     <div className="relative w-full overflow-hidden min-h-screen text-white bg-[#060b18]">
-      {/* Шапка БЕЗ Блогов и О нас */}
+      {/* Шапка без кнопки Войти */}
       <div className="w-full border-b border-slate-900/80 bg-[#060b18]/60 backdrop-blur-md sticky top-0 z-40">
         <header className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-12">
@@ -192,14 +192,6 @@ export default function InternshipsPage() {
                 Стажировки
               </button>
             </nav>
-          </div>
-          <div>
-            <button 
-              onClick={() => alert("Авторизация в разработке")}
-              className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow-[0_0_20px_rgba(59,130,246,0.3)]"
-            >
-              Войти
-            </button>
           </div>
         </header>
       </div>
@@ -218,7 +210,7 @@ export default function InternshipsPage() {
         ))}
       </div>
 
-      {/* Главный контент каталога */}
+      {/* Каталог стажировок */}
       <div className="mx-auto max-w-7xl px-6 py-20">
         <div className="mb-12">
           <span className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-xs font-bold px-4 py-2 rounded-full mb-4 border border-blue-500/20 uppercase tracking-widest backdrop-blur-sm">
@@ -260,7 +252,7 @@ export default function InternshipsPage() {
           </div>
         </div>
 
-        {/* Сетка карточек */}
+        {/* Сетка вакансий */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {filteredData.length > 0 ? (
@@ -311,7 +303,7 @@ export default function InternshipsPage() {
         </div>
       </div>
 
-      {/* Модальное окно деталей */}
+      {/* Модалка */}
       <AnimatePresence>
         {selectedJob && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
